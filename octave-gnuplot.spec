@@ -1,47 +1,38 @@
-%define	pkgname gnuplot
+%define octpkg gnuplot
 
 Summary:	Gnuplot scripts for Octave
-Name:       octave-%{pkgname}
+Name:		octave-%{octpkg}
 Version:	1.0.1
-Release:        5
-Source0:	%{pkgname}-%{version}.tar.gz
+Release:	1
+Source0:	http://downloads.sourceforge.net/octave/%{octpkg}-%{version}.tar.gz
 License:	GPLv2+
 Group:		Sciences/Mathematics
-Url:		http://octave.sourceforge.net/gnuplot/
-Conflicts:	octave-forge <= 20090607
-Requires:	octave >= 2.9.7
-Requires:	gnuplot >= 4.0
-BuildRequires:  octave-devel >= 2.9.9
-BuildRequires:  pkgconfig(gl)
-BuildRequires:  pkgconfig(glu)
-BuildRequires:	gnuplot >= 4.0
+Url:		https://octave.sourceforge.io/%{octpkg}/
 BuildArch:	noarch
-Requires:       octave(api) = %{octave_api}
+
+BuildRequires:	octave-devel >= 3.0.0
+BuildRequires:	gnuplot >= 4.0
+
+Requires:	octave(api) = %{octave_api}
+Requires:	gnuplot >= 4.0
+
 Requires(post): octave
 Requires(postun): octave
 
 %description
-This package provides scripts that can save data in gnuplot-readable
-formats, specify the gnuplot commands used to produce
-graphics, and invoke gnuplot. 
+Scripts to save data in gnuplot-readable formats, specify gnuplot commands
+that will be used to produce graphics, and call gnuplot.
+
+This package is part of unmantained Octave-Forge collection.
 
 %prep
-%setup -q -c %{pkgname}-%{version}
-cp %{SOURCE0} .
+%setup -qcT
+
+%build
+%octave_pkg_build -T
 
 %install
-%__install -m 755 -d %{buildroot}%{_datadir}/octave/packages/
-export OCT_PREFIX=%{buildroot}%{_datadir}/octave/packages
-octave -q --eval "pkg prefix $OCT_PREFIX; pkg install -verbose -nodeps -local %{pkgname}-%{version}.tar.gz"
-mv %{buildroot}%{_datadir}/octave/packages/%{pkgname}-%{version}/Changelog .
-rm -f %{buildroot}%{_datadir}/octave/packages/%{pkgname}-%{version}/COPYRIGHT
-rm -f %{buildroot}%{_datadir}/octave/packages/%{pkgname}-%{version}/LICENSE.txt
-
-tar zxf %{SOURCE0} 
-mv %{pkgname}/COPYING .
-mv %{pkgname}/DESCRIPTION .
-
-%clean
+%octave_pkg_install
 
 %post
 %octave_cmd pkg rebuild
@@ -53,5 +44,8 @@ mv %{pkgname}/DESCRIPTION .
 %octave_cmd pkg rebuild
 
 %files
-%doc COPYING DESCRIPTION Changelog
-%{_datadir}/octave/packages/%{pkgname}-%{version}
+%dir %{octpkgdir}
+%{octpkgdir}/*
+#%doc %{octpkg}/NEWS
+%doc %{octpkg}/COPYING
+
